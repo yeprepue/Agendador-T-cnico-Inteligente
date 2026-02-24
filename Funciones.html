@@ -1,0 +1,168 @@
+<script>
+  let calendar;
+  let editandoEventId = null;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#fecha", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      minDate: "today",
+      time_24hr: false,
+      locale: { firstDayOfWeek: 1 },
+      disable: [function(date) { return (date.getDay() === 0); }]
+    });
+
+    const calendarEl = document.getElementById('calendar-view');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'es',
+      headerToolbar: {
+        left: 'prev,next',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      buttonText: { month: 'Mes', week: 'Semana', day: 'Día' },
+      events: function(fetchInfo, successCallback, failureCallback) {
+        google.script.run.withSuccessHandler(function(res) {
+          if (res.error) {
+            console.error("Error del backend:", res.error);
+            return;
+          }
+          
+          // Mapeo blindado: Acepta tanto 'start'/'end' como 'inicio'/'fin'
+          const eventos = res.slotsOcupados.map(slot => {
+            const evtStart = slot.start || slot.inicio;
+            const evtEnd = slot.end || slot.fin;
+            const evtTitle = slot.title || slot.titulo;
+            const evtEstado = (slot.extendedProps && slot.extendedProps.estado) ? slot.extendedProps.estado : slot.estado;
+            const evtEmail = (slot.extendedProps && slot.extendedProps.emailCandidato) ? slot.extendedProps.emailCandidato : (slot.emailCandidato || "");
+
+            return {
+              id: slot.id,
+              title: evtEstado === "REALIZADO" ? "✔️ Realizado" : evtTitle,
+              start: evtStart,
+              end: evtEnd,
+              color: evtEstado === "REALIZADO" ? "#999999" : (evtTitle.includes("CANCELADO") ? "#666" : "#cc0000"),
+              extendedProps: { 
+                estado: evtEstado, 
+                tituloReal: evtTitle,
+                emailCandidato: evtEmail // Pasamos el correo para usarlo en el click
+              }
+            };
+          });
+          successCallback(eventos);
+        }).obtenerDisponibilidad();
+      },
+      eventClick: manejarClicEvento
+    });
+    calendar.render();
+  });
+
+function manejarClicEvento(info) {
+    const ahora = new Date();
+    const tiempoEvento = new Date(info.event.start);
+    const difHoras = (tiempoEvento - ahora) / (1000 * 60 * 60);
+    const correo = info.event.extendedProps.emailCandidato || "";
+    const btnContainer = document.getElementById('contenedor-botones-modal');
+
+    document.getElementById('modalEventId').value = info.event.id;
+    document.getElementById('detCandidato').innerText = info.event.extendedProps.tituloReal || info.event.title;
+    document.getElementById('modalEmailCandidato').value = correo;
+
+
+    if (difHoras < 2) {
+
+      let mensaje = difHoras < 0 ? "⚠️ Evento pasado (Solo lectura)" : "⚠️ Bloqueado: Menos de 2h para la cita";
+      btnContainer.innerHTML = `
+        <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; width: 100%; font-weight: bold;">
+          ${mensaje}
+        </div>
+      `;
+    } else {
+      
+      btnContainer.innerHTML = `
+        <button onclick="cargarParaEditar()" style="background: var(--acentos); color:white; padding:10px; border:none; border-radius:4px; cursor:pointer; flex:1;">✏️ Reprogramar</button>
+        <button onclick="solicitarCancelacion()" style="background: #ff4d4d; color:white; padding:10px; border:none; border-radius:4px; cursor:pointer; flex:1;">🚫 Cancelar</button>
+      `;
+    }
+    document.getElementById('modalEvento').style.display = "block";
+  }
+
+  function cargarParaEditar() {
+    const eventId = document.getElementById('modalEventId').value;
+    google.script.run.withSuccessHandler(function(det) {
+      document.getElementById('candidato').value = det.titulo.replace("Entrevista: ", "").split(" - ")[0];
+      document.getElementById('email').value = det.emailCandidato;
+      document.getElementById('fecha')._flatpickr.setDate(new Date(det.inicio));
+      editandoEventId = eventId;
+      const btn = document.getElementById('btn-agendar');
+      btn.textContent = "Confirmar Reprogramación";
+      btn.style.backgroundColor = "#ff9800";
+      cerrarModal();
+    }).obtenerDetallesEvento(eventId);
+  }
+
+  function solicitarCancelacion() {
+    const eventId = document.getElementById('modalEventId').value;
+    const emailCandidato = document.getElementById('modalEmailCandidato').value; // <-- CAPTURAMOS EMAIL
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Se notificará al candidato (" + (emailCandidato || "No registrado") + ") sobre la cancelación.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff4d4d',
+      cancelButtonColor: '#040025',
+      confirmButtonText: 'Sí, cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        google.script.run.withSuccessHandler(function(res) {
+          if(res.error) Swal.fire('Error', res.error, 'error');
+          else {
+            Swal.fire('¡Cancelada!', res.mensaje, 'success');
+            calendar.refetchEvents();
+            cerrarModal();
+          }
+        }).cancelarEntrevista(eventId, emailCandidato); // <-- MANDAMOS EMAIL AL BACKEND
+      }
+    });
+  }
+
+  document.getElementById('agendador-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-agendar');
+    btn.disabled = true;
+    btn.textContent = 'Procesando...';
+
+    const datos = {
+      candidato: document.getElementById('candidato').value,
+      rol: document.getElementById('rol').value,
+      emailEntrevistador: document.getElementById('email').value,
+      fechaStr: document.getElementById('fecha').value,
+      esEdicion: editandoEventId !== null,
+      eventId: editandoEventId
+    };
+
+    google.script.run.withSuccessHandler(respuesta => {
+      if (respuesta.error) {
+        Swal.fire({ icon: 'error', title: 'Error', text: respuesta.error });
+        btn.disabled = false;
+        btn.textContent = editandoEventId ? 'Confirmar Reprogramación' : 'Agendar Entrevista';
+      } else {
+        Swal.fire({ icon: 'success', title: '¡Éxito!', text: respuesta.mensaje, timer: 2000, showConfirmButton: false });
+        document.getElementById('agendador-form').reset();
+        editandoEventId = null;
+        btn.style.backgroundColor = ""; 
+        btn.textContent = 'Agendar Entrevista';
+        btn.disabled = false;
+        calendar.refetchEvents();
+      }
+    }).procesarAgendamiento(datos);
+  });
+
+  function cerrarModal() { document.getElementById('modalEvento').style.display = "none"; }
+  window.onclick = function(event) {
+    let modal = document.getElementById('modalEvento');
+    if (event.target == modal) cerrarModal();
+  }
+</script>

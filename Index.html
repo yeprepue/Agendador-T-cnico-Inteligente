@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendador Técnico Inteligente</title>
+
+  <?!= include('Estilos'); ?>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    #calendar-view {
+      margin-top: 1.5rem;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      max-height: 550px;
+    }
+
+    .fc-event {
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    .fc-toolbar-title {
+      font-size: 1.1rem !important;
+      color: var(--primario);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Agendador Técnico Inteligente</h1>
+  </header>
+
+  <main class="split-container">
+    <section class="left-panel">
+      <h2>Disponibilidad RR.HH.</h2>
+      <p><small>Consulta los espacios ocupados antes de agendar tu sesión.</small></p>
+      <div id="calendar-view"></div>
+    </section>
+
+    <section class="right-panel">
+      <h2 id="titulo-formulario">Agendar Entrevista</h2>
+      <form id="agendador-form">
+        <div class="form-group">
+          <label for="candidato">Nombre del Candidato</label>
+          <input type="text" id="candidato" placeholder="Nombre completo" required>
+        </div>
+
+        <div class="form-group">
+          <label for="rol">Rol a Evaluar</label>
+          <input type="text" id="rol" placeholder="Ej: Fullstack Developer" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email del Candidato</label>
+          <input type="email" id="email" placeholder="candidato@correo.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="fecha">Seleccionar Fecha y Hora</label>
+          <input type="text" id="fecha" placeholder="Clic para abrir calendario..." required>
+        </div>
+
+        <button type="submit" id="btn-agendar">Agendar Entrevista</button>
+      </form>
+      <div id="mensaje-estado"></div>
+    </section>
+  </main>
+
+  <div id="modalEvento" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <h3>Gestión de Entrevista</h3>
+      <div id="modalCuerpo">
+        <p><strong>Evento:</strong> <span id="detCandidato"></span></p>
+        
+        <input type="hidden" id="modalEventId">
+        <input type="hidden" id="modalEmailCandidato"> <div id="contenedor-botones-modal" style="display: flex; gap: 10px; margin-top: 20px;">
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <?!= include('Funciones'); ?>
+</body>
+</html>
