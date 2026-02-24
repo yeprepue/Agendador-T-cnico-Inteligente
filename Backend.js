@@ -121,7 +121,7 @@ function cancelarEntrevista(eventId, emailPersistido) {
  * Requiere activar el servicio "Google Calendar API" en la pestaña de Servicios.
  */
 function procesarAgendamiento(datos) {
-  const API_KEY = "AIzaSyAezVY6dHEBZKgeEnl3DRbhvGhztMQh7LE";
+  const API_KEY = API_KEY;
   const calendarId = "primary";
   const esEdicion = datos.esEdicion || false;
   const ahora = new Date();
