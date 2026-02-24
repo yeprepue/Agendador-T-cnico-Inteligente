@@ -73,5 +73,3 @@ clasp push
 3. Sube tus cambios (`git commit -m 'Añade nueva función'`).
 4. Haz Push (`git push origin feature/Mejora`) y abre un Pull Request.
 
----
-*Desarrollado con enfoque en la eficiencia técnica y experiencia del candidato.*
