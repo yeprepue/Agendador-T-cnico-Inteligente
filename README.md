@@ -1,163 +1,74 @@
 # 📅 Agendador Técnico Inteligente
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Deploy Status](https://img.shields.io/badge/Deploy-Passing-brightgreen.svg)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
+[![Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-4285F4?logo=googleappsscript&logoColor=white)]()
 
-Sistema automatizado para la asignación y gestión optimizada de tareas técnicas. Esta plataforma mejora la planificación de recursos, gestiona calendarios en tiempo real y reduce los tiempos de espera mediante un emparejamiento inteligente entre los requerimientos y el personal adecuado.
-
-## 📑 Tabla de Contenidos
-
-- [Características Principales](#-características-principales)
-- [Arquitectura y Tecnologías](#%EF%B8%8F-arquitectura-y-tecnologías)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación y Uso Local](#-instalación-y-uso-local)
-- [Despliegue (Producción)](#-despliegue-producción)
-- [Contribución](#-contribución)
-
-## ✨ Características Principales
-
-* **Asignación Inteligente:** Empareja automáticamente a los técnicos disponibles basándose en sus habilidades y ubicación.
-* **Gestión en Tiempo Real:** Actualización de estados de tickets y calendarios al instante.
-* **Optimización de Rutas:** [Opcional: Reducción de tiempos de traslado para personal en campo].
-* **API RESTful:** Integración sencilla con otros sistemas corporativos (CRM, ERP).
-
-## 🛠️ Arquitectura y Tecnologías
-
-* **Backend:** `<Node.js / Python / Java>` con `<Express / FastAPI / Spring Boot>`
-* **Base de Datos:** `<PostgreSQL / MongoDB>`
-* **Caché:** `Redis` (para manejo de sesiones y estados en tiempo real)
-* **Infraestructura:** AWS gestionado mediante Terraform
-
-## 📋 Requisitos Previos
-
-Asegúrate de tener instaladas las siguientes herramientas en tu entorno de desarrollo antes de comenzar:
-
-* [Git](https://git-scm.com/)
-* [<Lenguaje / Entorno>](<Enlace-oficial>) (ej. Node.js v18+)
-* [Docker](https://www.docker.com/) y Docker Compose (para la base de datos local)
-* [Terraform](https://www.terraform.io/) (para el despliegue de infraestructura)
-* [AWS CLI](https://aws.amazon.com/cli/) configurado con tus credenciales
-
-## 💻 Instalación y Uso Local
-
-Sigue estos pasos para levantar el entorno de desarrollo en tu máquina local:
-
-1. **Clonar el repositorio:**
-   ```bash
-   git clone [https://github.com/yeprepue/Agendador-T-cnico-Inteligente.git](https://github.com/yeprepue/Agendador-T-cnico-Inteligente.git)
-   cd Agendador-T-cnico-Inteligente
-# 📅 Agendador Técnico Inteligente
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Deploy Status](https://img.shields.io/badge/Deploy-Passing-brightgreen.svg)]()
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
-
-Sistema automatizado para la asignación y gestión optimizada de tareas técnicas. Esta plataforma mejora la planificación de recursos, gestiona calendarios en tiempo real y reduce los tiempos de espera mediante un emparejamiento inteligente entre los requerimientos y el personal adecuado.
+Sistema automatizado para la gestión y programación de entrevistas técnicas. Esta plataforma facilita la visualización de disponibilidad de RR.HH., previene el cruce de horarios y automatiza la generación de enlaces de videollamada y correos utilizando Inteligencia Artificial.
 
 ## 📑 Tabla de Contenidos
 
-- [Características Principales](#-características-principales)
-- [Arquitectura y Tecnologías](#%EF%B8%8F-arquitectura-y-tecnologías)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación y Uso Local](#-instalación-y-uso-local)
-- [Despliegue (Producción)](#-despliegue-producción)
-- [Contribución](#-contribución)
+- [✨ Características Principales](#-características-principales)
+- [🛠️ Arquitectura y Tecnologías](#%EF%B8%8F-arquitectura-y-tecnologías)
+- [🚀 Guía de Despliegue](#-guía-de-despliegue)
+- [🤝 Contribución](#-contribución)
 
 ## ✨ Características Principales
 
-* **Asignación Inteligente:** Empareja automáticamente a los técnicos disponibles basándose en sus habilidades y ubicación.
-* **Gestión en Tiempo Real:** Actualización de estados de tickets y calendarios al instante.
-* **Optimización de Rutas:** [Opcional: Reducción de tiempos de traslado para personal en campo].
-* **API RESTful:** Integración sencilla con otros sistemas corporativos (CRM, ERP).
+* **Calendario Interactivo**: Visualización en tiempo real de los espacios ocupados y disponibles de la cuenta de Recursos Humanos en los próximos 30 días.
+* **Gestión de Citas (CRUD)**: Permite agendar nuevas entrevistas, reprogramarlas o cancelarlas. Incluye un bloqueo de seguridad que impide cancelar citas con menos de 2 horas de antelación.
+* **Integración con Google Meet**: Generación y adjunción automática de enlaces de Google Meet a cada evento creado.
+* **IA para Comunicaciones**: Utiliza el modelo Gemini (1.5 Flash) para redactar automáticamente correos de invitación y de reprogramación con tono profesional.
+* **Notificaciones por Correo**: Envío de confirmaciones y enlaces de acceso mediante plantillas HTML a través de Gmail.
 
 ## 🛠️ Arquitectura y Tecnologías
 
-* **Backend:** `<Node.js / Python / Java>` con `<Express / FastAPI / Spring Boot>`
-* **Base de Datos:** `<PostgreSQL / MongoDB>`
-* **Caché:** `Redis` (para manejo de sesiones y estados en tiempo real)
-* **Infraestructura:** AWS gestionado mediante Terraform
+**Frontend**
+* **HTML5 / CSS3**: Diseño responsivo dividido en paneles.
+* **Librerías UI**: 
+  * [FullCalendar](https://fullcalendar.io/): Renderizado de la agenda mensual y semanal.
+  * [Flatpickr](https://flatpickr.js.org/): Selector optimizado de fechas y horas.
+  * [SweetAlert2](https://sweetalert2.github.io/): Manejo de alertas modales y confirmaciones.
 
-## 📋 Requisitos Previos
+**Backend (Serverless)**
+* **Google Apps Script**: Lógica del servidor (`doGet`) y comunicación con el cliente mediante `google.script.run`.
+* **Google Workspace Services**: `CalendarApp` y `Calendar.Events` (Advanced API) para gestión de agenda, y `GmailApp` para correos.
+* **API de IA**: Google Generative Language API (`UrlFetchApp` a Gemini).
 
-Asegúrate de tener instaladas las siguientes herramientas en tu entorno de desarrollo antes de comenzar:
+## 🚀 Guía de Despliegue
 
-* [Git](https://git-scm.com/)
-* [<Lenguaje / Entorno>](<Enlace-oficial>) (ej. Node.js v18+)
-* [Docker](https://www.docker.com/) y Docker Compose (para la base de datos local)
-* [Terraform](https://www.terraform.io/) (para el despliegue de infraestructura)
-* [AWS CLI](https://aws.amazon.com/cli/) configurado con tus credenciales
+A diferencia de las aplicaciones Node.js o Python estándar, este proyecto se aloja y ejecuta en el entorno de **Google Apps Script**. Sigue estos pasos para desplegar la aplicación:
 
-## 💻 Instalación y Uso Local
+### 1. Preparación del Entorno
+1. Dirígete a [script.google.com](https://script.google.com/) y crea un **Nuevo Proyecto**.
+2. Renombra el proyecto a `Agendador Técnico Inteligente`.
 
-Sigue estos pasos para levantar el entorno de desarrollo en tu máquina local:
+### 2. Carga de Archivos
+Crea los siguientes archivos en tu proyecto de Apps Script copiando el código fuente del repositorio:
+* Crea un archivo Script llamado `Backend.gs` y pega el contenido de `Backend.js`.
+* Crea un archivo HTML llamado `Index.html`.
+* Crea un archivo HTML llamado `Estilos.html`.
+* Crea un archivo HTML llamado `Funciones.html`.
 
-**1. Clonar el repositorio:**
-```bash
-git clone https://github.com/yeprepue/Agendador-T-cnico-Inteligente.git
-cd Agendador-T-cnico-Inteligente
-```
+### 3. Configuración de Servicios y Variables
+1. **Activar API de Calendar**: En el panel izquierdo del editor de Apps Script, ve a **Servicios** (`+`), busca "Google Calendar API" y actívala.
+2. **Configurar Cuenta**: Asegúrate de actualizar la variable `emailRRHH` en la función `obtenerDisponibilidad()` con el correo principal de la agenda.
+3. **API Key de Gemini**: Modifica la variable `API_KEY` en la función `procesarAgendamiento()` con tu clave de Google AI Studio.
 
-**2. Levantar servicios de infraestructura local (Base de datos):**
-```bash
-docker-compose up -d
-```
-
-**3. Instalar dependencias:**
-```bash
-<npm install / pip install -r requirements.txt>
-```
-
-**4. Configurar variables de entorno:**
-Copia el archivo de ejemplo y configura tus credenciales locales.
-```bash
-cp .env.example .env
-```
-
-**5. Ejecutar la aplicación:**
-```bash
-<npm run dev / python main.py>
-```
-La API estará disponible en `http://localhost:3000` (o el puerto configurado).
-
-## 🚀 Despliegue (Producción)
-
-El despliegue de este proyecto está automatizado mediante **Terraform** para aprovisionar la infraestructura en **AWS**. Esto garantiza que los entornos sean replicables y seguros.
-
-### Pasos para desplegar la infraestructura:
-
-**1. Inicializar Terraform:**
-Navega a la carpeta de infraestructura y descarga los providers necesarios.
-```bash
-cd terraform/environments/prod
-terraform init
-```
-
-**2. Revisar el plan de ejecución:**
-Verifica los recursos de AWS (EC2, RDS, VPC, etc.) que se van a crear o modificar.
-```bash
-terraform plan -var-file="prod.tfvars"
-```
-
-**3. Aplicar los cambios:**
-Despliega la infraestructura en tu cuenta de AWS.
-```bash
-terraform apply -var-file="prod.tfvars"
-```
-
-**4. CI/CD:**
-Una vez que la infraestructura base está arriba, cualquier push a la rama `main` activará los flujos de trabajo de GitHub Actions, los cuales construirán la imagen Docker y actualizarán el servicio correspondiente en AWS.
+### 4. Despliegue como Aplicación Web
+1. Haz clic en el botón azul **Implementar** (Deploy) > **Nueva implementación**.
+2. Selecciona el tipo **Aplicación web**.
+3. Configura:
+   * *Ejecutar como*: "Yo" (Tu cuenta de Google).
+   * *Quién tiene acceso*: "Cualquier persona".
+4. Haz clic en **Implementar** y otorga los permisos requeridos (Calendario, Correo externo).
+5. ¡Listo! Obtendrás una URL pública para acceder a tu agendador.
 
 ## 🤝 Contribución
 
-¡Las contribuciones son bienvenidas! Si deseas mejorar el agendador:
+¡Las contribuciones son bienvenidas!
 
 1. Haz un Fork del proyecto.
 2. Crea tu rama de características (`git checkout -b feature/NuevaCaracteristica`).
 3. Realiza tus commits (`git commit -m 'Añade nueva característica'`).
 4. Haz push a la rama (`git push origin feature/NuevaCaracteristica`).
 5. Abre un Pull Request detallando tus cambios.
-
----
-*Mantenido con ❤️ por el equipo de desarrollo.*
-   
